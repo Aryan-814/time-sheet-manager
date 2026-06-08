@@ -86,3 +86,73 @@ app.get('/api/users', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch users', details: error.message });
   }
 });
+
+// GET: Fetch all Jobs (Populated)
+app.get('/api/jobs', async (req, res) => {
+  try {
+    const all_jobs = await Job.find({}).populate('managerId', 'firstName lastName email');
+    res.status(200).json(all_jobs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch jobs', details: error.message });
+  }
+});
+
+// POST: Clock In
+app.post('/api/timesheets/clock-in', async (req, res) => {
+  try {
+    const { userId, jobId } = req.body;
+
+    const new_timesheet = new Timesheet({
+      userId,
+      jobId,
+      startTime: new Date()
+    });
+
+    const saved_timesheet = await new_timesheet.save();
+    res.status(201).json(saved_timesheet);
+  } catch (error) {
+    console.error('Error clocking in:', error);
+    res.status(500).json({ error: 'Failed to clock in', details: error.message });
+  }
+});
+
+// PUT: Clock Out
+app.put('/api/timesheets/clock-out/:id', async (req, res) => {
+  try {
+    const timesheet_id = req.params.id;
+    const current_end_time = new Date();
+
+    const active_shift = await Timesheet.findById(timesheet_id);
+    if (!active_shift) {
+      return res.status(404).json({ error: 'Timesheet session not found' });
+    }
+
+    if (active_shift.endTime) {
+      return res.status(400).json({ error: 'Already clocked out of this shift' });
+    }
+
+    const diff_in_ms = current_end_time - active_shift.startTime;
+    const calculated_hours = (diff_in_ms / (1000 * 60 * 60)).toFixed(2); 
+
+    active_shift.endTime = current_end_time;
+    active_shift.totalHours = parseFloat(calculated_hours);
+    
+    const updated_timesheet = await active_shift.save();
+    res.status(200).json(updated_timesheet);
+  } catch (error) {
+    console.error('Error clocking out:', error);
+    res.status(500).json({ error: 'Failed to clock out', details: error.message });
+  }
+});
+
+// GET: Fetch all Timesheets
+app.get('/api/timesheets', async (req, res) => {
+  try {
+    const all_timesheets = await Timesheet.find({})
+      .populate('userId', 'firstName lastName email')
+      .populate('jobId', 'title');
+    res.status(200).json(all_timesheets);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch timesheets', details: error.message });
+  }
+});
