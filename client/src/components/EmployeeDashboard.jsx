@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import useStopwatch from '../hooks/useStopwatch';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -10,6 +11,8 @@ export default function EmployeeDashboard() {
   const [selectedJob, setSelectedJob] = useState('');
   const [activeShift, setActiveShift] = useState(null);
   const [message, setMessage] = useState('');
+    
+  const elapsedTime = useStopwatch(activeShift?.startTime);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,7 +58,6 @@ export default function EmployeeDashboard() {
 
   return (
     <>
-      <h1 className="page-header">Clock In Terminal</h1>
       <div className="content-card" style={{ maxWidth: '500px', margin: '0 auto' }}>
         
         {!activeShift ? (
@@ -79,10 +81,17 @@ export default function EmployeeDashboard() {
             </button>
           </form>
         ) : (
-          <div style={{ textAlign: 'center', padding: '20px', border: '2px solid #2e7d32', borderRadius: '8px' }}>
-            <h3 style={{ color: '#2e7d32', marginTop: 0 }}>Currently Clocked In</h3>
-            <p><strong>Shift Started:</strong> {new Date(activeShift.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-            <button onClick={handleClockOut} className="btn-primary" style={{ backgroundColor: '#c62828', width: '100%', marginTop: '15px' }}>
+          <div style={{ textAlign: 'center', padding: '30px 20px', border: '2px solid #2e7d32', borderRadius: '8px', backgroundColor: '#f8fff9' }}>
+            <h3 style={{ color: '#2e7d32', marginTop: 0, marginBottom: '20px' }}>Currently Clocked In</h3>
+            <div style={{ fontSize: '48px', fontWeight: 'bold', fontFamily: 'monospace', color: '#111', letterSpacing: '2px', marginBottom: '10px' }}>
+              {elapsedTime}
+            </div>
+            
+            <p style={{ color: '#666', marginTop: 0, marginBottom: '25px' }}>
+              Started at {new Date(activeShift.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </p>
+
+            <button onClick={handleClockOut} className="btn-primary" style={{ backgroundColor: '#c62828', width: '100%', fontSize: '16px', padding: '15px' }}>
               Clock Out
             </button>
           </div>

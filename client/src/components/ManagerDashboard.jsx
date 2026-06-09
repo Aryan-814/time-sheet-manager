@@ -19,8 +19,6 @@ export default function ManagerDashboard({ users, fetchData }) {
       };
       await axios.post(`${API_URL}/jobs`, newJobData);
       setTitle(''); setDescription(''); setManagerId(''); setLng(''); setLat('');
-      
-      // Refresh the master data in App.jsx
       fetchData(); 
     } catch (err) {
       console.error("Error creating job:", err);
