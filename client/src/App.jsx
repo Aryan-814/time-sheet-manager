@@ -121,7 +121,6 @@ function App() {
             )}
           </div>
 
-          {/* 3. Added the actual Timesheet Table HTML! */}
           <h2 className="list-header" style={{ marginTop: '50px' }}>Employee Timesheets</h2>
           <div className="table-container">
             <table className="data-table">
