@@ -15,9 +15,9 @@ export default function TimesheetTable({timesheets}) {
                     </thead>
                     <tbody>
                         {timesheets.length === 0 ? (
-                        <tr>
-                            <td colSpan="5" style={{ textAlign: 'center' }}>No timesheets recorded yet.</td>
-                        </tr>
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center' }}>No timesheets recorded yet.</td>
+                            </tr>
                         ) : (
                         timesheets.map((sheet) => (
                             <tr key={sheet._id}>

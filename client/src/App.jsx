@@ -5,6 +5,7 @@ import './App.css';
 import ManagerDashboard from './components/ManagerDashboard';
 import TimesheetTable from './components/TimesheetTable';
 import EmployeeDashboard from './components/EmployeeDashboard';
+import HoursChart from './components/HoursChart';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -53,6 +54,9 @@ function App() {
           <button className={`nav-button ${view === 'timesheets' ? 'active' : ''}`} onClick={() => { setView('timesheets'); fetchData(); }}>
             Timesheets
           </button>
+          <button className={`nav-button ${view === 'analytics' ? 'active' : ''}`} onClick={() => { setView('analytics'); fetchData(); }}>
+            Analytics
+          </button>
           <button className={`nav-button ${view === 'employee' ? 'active' : ''}`} onClick={() => setView('employee')}>
             Clock In Terminal
           </button>
@@ -62,6 +66,7 @@ function App() {
       <main className="content-area">
         {view === 'employee' && <EmployeeDashboard />}
         {view === 'manager' && <ManagerDashboard users={users} fetchData={fetchData} />}
+        {view == 'analytics' && <HoursChart timesheets={timesheets} />}
         {view === 'timesheets' && <TimesheetTable timesheets={timesheets} />}
       </main>
 
