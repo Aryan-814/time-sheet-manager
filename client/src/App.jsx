@@ -10,6 +10,7 @@ function App() {
 
   const [jobs, setJobs] = useState([]);
   const [users, setUsers] = useState([]);
+  const [timesheets, setTimesheets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,15 +21,16 @@ function App() {
   const [lat, setLat] = useState('');
   const [submitMessage, setSubmitMessage] = useState('');
 
-  // Update fetch data to get both Jobs AND Users
   const fetchData = async () => {
     try {
-      const [jobsRes, usersRes] = await Promise.all([
+      const [jobsRes, usersRes, timesheetsRes] = await Promise.all([
         axios.get(`${API_URL}/jobs`),
-        axios.get(`${API_URL}/users`) 
+        axios.get(`${API_URL}/users`),
+        axios.get(`${API_URL}/timesheets`) 
       ]);
       setJobs(jobsRes.data);
-      setUsers(usersRes.data); 
+      setUsers(usersRes.data);
+      setTimesheets(timesheetsRes.data); 
       setLoading(false);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -70,7 +72,7 @@ function App() {
     <div className="dashboard-container">
       
       <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', borderBottom: '2px solid #eee', paddingBottom: '20px' }}>
-        <button onClick={() => setView('manager')} className="primary-button" style={{ backgroundColor: view === 'manager' ? '#0d47a1' : '#ccc' }}>Manager View</button>
+        <button onClick={() => { setView('manager'); fetchData(); }} className="primary-button" style={{ backgroundColor: view === 'manager' ? '#0d47a1' : '#ccc' }}>Manager View</button>
         <button onClick={() => setView('employee')} className="primary-button" style={{ backgroundColor: view === 'employee' ? '#0d47a1' : '#ccc' }}>Employee View</button>
       </div>
 
@@ -86,13 +88,7 @@ function App() {
               <input type="text" placeholder="Job Title" value={title} onChange={(e) => setTitle(e.target.value)} required className="form-input"/>
               <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required className="form-input"/>
               
-              <select 
-                value={managerId} 
-                onChange={(e) => setManagerId(e.target.value)} 
-                required 
-                className="form-input"
-                style={{ backgroundColor: 'white' }}
-              >
+              <select value={managerId} onChange={(e) => setManagerId(e.target.value)} required className="form-input" style={{ backgroundColor: 'white' }}>
                 <option value="" disabled>Assign a Manager...</option>
                 {users.map((user) => (
                   <option key={user._id} value={user._id}>
@@ -124,9 +120,50 @@ function App() {
               ))
             )}
           </div>
+
+          {/* 3. Added the actual Timesheet Table HTML! */}
+          <h2 className="list-header" style={{ marginTop: '50px' }}>Employee Timesheets</h2>
+          <div className="table-container">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Job Site</th>
+                  <th>Clock In</th>
+                  <th>Clock Out</th>
+                  <th>Total Hours</th>
+                </tr>
+              </thead>
+              <tbody>
+                {timesheets.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" style={{ textAlign: 'center', color: '#666' }}>No timesheets recorded yet.</td>
+                  </tr>
+                ) : (
+                  timesheets.map((sheet) => (
+                    <tr key={sheet._id}>
+                      <td>{sheet.userId?.firstName} {sheet.userId?.lastName}</td>
+                      <td>{sheet.jobId?.title}</td>
+                      <td>{new Date(sheet.startTime).toLocaleString()}</td>
+                      <td>
+                        {sheet.endTime 
+                          ? new Date(sheet.endTime).toLocaleString() 
+                          : <span className="active-badge">Currently Active</span>}
+                      </td>
+                      <td>
+                        {sheet.totalHours !== undefined 
+                          ? <strong>{sheet.totalHours} hrs</strong> 
+                          : '-'}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
         </>
       )}
-
     </div>
   );
 }

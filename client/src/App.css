@@ -93,9 +93,9 @@
   margin-top: 12px;
   display: inline-block;
   padding: 4px 10px;
-  background-color: #e3f2fd;
-  color: #0d47a1;
-  border-radius: 12px;
+  background-color: #53be68;
+  color: #000000;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: bold;
 }
@@ -103,4 +103,47 @@
 .loading-error-state {
   padding: 20px;
   font-family: system-ui, sans-serif;
+}
+
+.table-container {
+  overflow-x: auto; 
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  text-align: left;
+}
+
+.data-table th, 
+.data-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.data-table th {
+  background-color: #f0f4f8;
+  color: #333;
+  font-weight: bold;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover {
+  background-color: #fcfcfc;
+}
+
+.active-badge {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
 }

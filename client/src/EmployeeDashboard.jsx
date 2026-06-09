@@ -6,12 +6,11 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 export default function EmployeeDashboard() {
   const [userId, setUserId] = useState('');
   const [jobs, setJobs] = useState([]);
-  const [users, setUsers] = useState([]); // <-- NEW: State to hold our employees
+  const [users, setUsers] = useState([]); 
   const [selectedJob, setSelectedJob] = useState('');
   const [activeShift, setActiveShift] = useState(null);
   const [message, setMessage] = useState('');
 
-  // Fetch both jobs AND users when the component loads
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,7 +63,6 @@ export default function EmployeeDashboard() {
 
       {!activeShift ? (
         <form onSubmit={handleClockIn} className="job-form">
-            
           <select
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
