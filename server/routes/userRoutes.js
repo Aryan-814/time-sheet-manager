@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
 // GET: Fetch all Users
 router.get('/', async (req, res) => {
   try {
-    const allUsers = await User.find({});
+    const allUsers = await User.find({ organizationId: req.user.organizationId});
     res.status(200).json(allUsers);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch users', details: error.message });

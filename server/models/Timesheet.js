@@ -11,6 +11,11 @@ const timesheetSchema = new mongoose.Schema({
     ref: 'Job', 
     required: true 
   },
+  organizationId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Organization', 
+    required: true 
+  },
   startTime: { type: Date, required: true },
   endTime: { type: Date }, 
   totalHours: { type: Number }, 

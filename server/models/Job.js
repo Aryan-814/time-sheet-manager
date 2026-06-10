@@ -8,6 +8,11 @@ const jobSchema = new mongoose.Schema({
     enum: ['Active', 'Completed', 'On Hold'], 
     default: 'Active' 
   },
+  organizationId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Organization', 
+    required: true 
+  },
   managerId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 

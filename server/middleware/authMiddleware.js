@@ -16,7 +16,7 @@ export const protect = async (req, res, next) => {
       req.user = decoded;
 
       // Send them through to the actual route!
-      next();
+      return next();
     } catch (error) {
       console.error(error);
       res.status(401).json({ error: 'Not authorized, token failed or expired' });

@@ -10,7 +10,8 @@ router.post('/clock-in', async (req, res) => {
     const newTimesheet = new Timesheet({
       userId,
       jobId,
-      startTime: new Date()
+      startTime: new Date(),
+      organizationId: req.user.organizationId
     });
 
     const savedTimesheet = await newTimesheet.save();
@@ -48,7 +49,7 @@ router.put('/clock-out/:id', async (req, res) => {
 // GET: Fetch all Timesheets
 router.get('/', async (req, res) => {
   try {
-    const allTimesheets = await Timesheet.find({})
+    const allTimesheets = await Timesheet.find({ organizationId: req.user.organizationId })
       .populate('userId', 'firstName lastName email')
       .populate('jobId', 'title');
     res.status(200).json(allTimesheets);

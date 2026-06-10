@@ -15,7 +15,8 @@ router.post('/', async (req, res) => {
       location: {
         type: 'Point',
         coordinates: coordinates 
-      }
+      },
+      organizationId: req.user.organizationId
     });
 
     const savedJob = await newJob.save();
@@ -29,7 +30,8 @@ router.post('/', async (req, res) => {
 // GET: Fetch all Jobs
 router.get('/', async (req, res) => {
   try {
-    const allJobs = await Job.find({}).populate('managerId', 'firstName lastName email');
+    const allJobs = await Job.find({ organizationId: req.user.organizationId })
+      .populate('managerId', 'firstName lastName email');
     res.status(200).json(allJobs);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch jobs', details: error.message });
