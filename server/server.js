@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js';
 import jobRoutes from './routes/jobRoutes.js';
 import timesheetRoutes from './routes/timesheetRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import { protect } from './middleware/authMiddleware.js';
 
 dotenv.config();
 
@@ -14,11 +15,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/users', userRoutes);
-app.use('/api/jobs', jobRoutes);
-app.use('/api/timesheets', timesheetRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/jobs', protect, jobRoutes);
+app.use('/api/timesheets', protect, timesheetRoutes);
+app.use('/api/users', protect, userRoutes);
 
 app.get('/api/status', (req, res) => {
   res.json({ message: 'Timesheet API is up and running with modular routes!' });
