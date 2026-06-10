@@ -11,7 +11,12 @@ const userSchema = new mongoose.Schema({
     default: 'Staff' 
   },
   hourlyRate: { type: Number, required: true },
-  isActive: { type: Boolean, default: true }
+  isActive: { type: Boolean, default: true },
+  organizationId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Organization', 
+    required: true 
+  }
 }, { 
   timestamps: true 
 });
