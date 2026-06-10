@@ -6,10 +6,14 @@ import ManagerDashboard from './components/ManagerDashboard';
 import TimesheetTable from './components/TimesheetTable';
 import EmployeeDashboard from './components/EmployeeDashboard';
 import HoursChart from './components/HoursChart';
+import Auth from './components/Auth';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 function App() {
+
+  const [token, setToken] = useState(localStorage.getItem('timesheet_token'))
+  
   const [view, setView] = useState('manager'); 
   const [users, setUsers] = useState([]);
   const [timesheets, setTimesheets] = useState([]);
@@ -17,6 +21,9 @@ function App() {
   const [error, setError] = useState(null);
 
   const fetchData = async () => {
+
+    if(!token) return;
+
     try {
       const [usersRes, timesheetsRes] = await Promise.all([
         axios.get(`${API_URL}/users`),
@@ -34,7 +41,16 @@ function App() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('timesheet_token');
+    setToken(null);
+  }
+
+  if(!token) {
+    return <Auth onLogin={setToken} />;
+  }
 
   if (loading) return <div style={{padding: '40px'}}>Loading workspace...</div>;
   if (error) return <div style={{padding: '40px', color: 'red'}}>{error}</div>;
@@ -59,6 +75,9 @@ function App() {
           </button>
           <button className={`nav-button ${view === 'employee' ? 'active' : ''}`} onClick={() => setView('employee')}>
             Clock In Terminal
+          </button>
+          <button onClick={handleLogout} className='nav-button'>
+            Logout
           </button>
         </nav>
       </header>

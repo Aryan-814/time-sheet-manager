@@ -2,6 +2,7 @@ export default function TimesheetTable({timesheets}) {
     return (
         <>
             <h1 className="page-header">Timesheets</h1>
+            
             <div className="table-container">
                 <table className="data-table">
                     <thead>

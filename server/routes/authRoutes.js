@@ -9,18 +9,22 @@ const router = express.Router();
 // POST: Register a new Company & Admin
 router.post('/register-company', async (req, res) => {
   try {
+    //Find if it exists
     const { companyName, firstName, lastName, email, password } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
+    // create a new one
     const newOrg = new Organization({ name: companyName });
     const savedOrg = await newOrg.save();
 
+     //hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    //Create the admin user
     const newUser = new User({
       firstName,
       lastName,
@@ -53,6 +57,7 @@ router.post('/register-company', async (req, res) => {
 // POST: Login User
 router.post('/login', async (req, res) => {
   try {
+    //Find the user
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
