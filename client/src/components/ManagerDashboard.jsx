@@ -10,6 +10,11 @@ export default function ManagerDashboard({ users, fetchData }) {
   const [lng, setLng] = useState('');
   const [lat, setLat] = useState('');
 
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState('Staff');
+  const [inviteLink, setInviteLink] = useState('');
+  const [inviteError, setInviteError] = useState('');
+
   const handleCreateJob = async (e) => {
     e.preventDefault(); 
     try {
@@ -24,6 +29,26 @@ export default function ManagerDashboard({ users, fetchData }) {
       console.error("Error creating job:", err);
     }
   };
+
+  const handleInvite = async (e) => {
+    e.preventDefault();
+    setInviteError('');
+    setInviteLink('');
+    
+    try {
+      const newInvitation = {
+        email : inviteEmail,
+        role : inviteRole
+      };
+
+      const response = await axios.post(`${API_URL}/auth/invite`, newInvitation);
+
+      setInviteLink(response.data.inviteLink);
+      setInviteEmail('');
+    } catch (error) {
+      setInviteError(error.response?.data?.error || 'Failed to generate Link');
+    }
+  }
 
   return (
     <>
@@ -48,6 +73,66 @@ export default function ManagerDashboard({ users, fetchData }) {
           </div>
           <button type="submit" className="btn-primary">Create Site</button>
         </form>
+      </div>
+
+      <div className="content-card">
+        <h2 className="card-title">Invite New Team Member</h2>
+        <p style={{ color: '#666', marginBottom: '20px' }}>
+          Generate a secure, one-time link to invite an employee to your organization workspace.
+        </p>
+
+        <form onSubmit={handleInvite} style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <input 
+            type="email" 
+            placeholder="Employee Email" 
+            value={inviteEmail} 
+            onChange={(e) => setInviteEmail(e.target.value)} 
+            required 
+            className="form-input"
+            style={{ flex: 1, minWidth: '200px', margin: 0 }}
+          />
+          
+          <select 
+            value={inviteRole} 
+            onChange={(e) => setInviteRole(e.target.value)}
+            className="form-input"
+            style={{ width: '150px', margin: 0 }}
+          >
+            <option value="Staff">Staff</option>
+            <option value="Manager">Manager</option>
+          </select>
+
+          <button type="submit" className="btn-primary" style={{ margin: 0 }}>
+            Generate Link
+          </button>
+        </form>
+
+        {inviteError && (
+          <div style={{ marginTop: '15px', color: '#c62828', fontSize: '14px' }}>
+            {inviteError}
+          </div>
+        )}
+
+        {inviteLink && (
+          <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#e3f2fd', border: '1px solid #90caf9', borderRadius: '6px' }}>
+            <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: '#0d47a1' }}>Invitation Created!</p>
+            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#333' }}>Send this link to the employee. It will expire in 24 hours.</p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <input 
+                type="text" 
+                readOnly 
+                value={inviteLink} 
+                style={{ flex: 1, padding: '8px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#fff' }}
+              />
+              <button 
+                onClick={() => navigator.clipboard.writeText(inviteLink)}
+                style={{ padding: '8px 15px', backgroundColor: '#fff', border: '1px solid #0d47a1', color: '#0d47a1', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
