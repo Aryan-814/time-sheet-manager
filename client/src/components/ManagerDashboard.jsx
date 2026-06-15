@@ -4,16 +4,23 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function ManagerDashboard({ users, fetchData }) {
+  // Job Site State 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [managerId, setManagerId] = useState('');
   const [lng, setLng] = useState('');
   const [lat, setLat] = useState('');
 
+  // Invite State 
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('Staff');
   const [inviteLink, setInviteLink] = useState('');
   const [inviteError, setInviteError] = useState('');
+
+  // Network Security State 
+  const [allowedIP, setAllowedIP] = useState('');
+  const [securityMessage, setSecurityMessage] = useState('');
+  const [securityError, setSecurityError] = useState('');
 
   const handleCreateJob = async (e) => {
     e.preventDefault(); 
@@ -50,10 +57,27 @@ export default function ManagerDashboard({ users, fetchData }) {
     }
   }
 
+  // Handle IP Security Update
+  const handleUpdateSecurity = async (e) => {
+    e.preventDefault();
+    setSecurityMessage('');
+    setSecurityError('');
+
+    try {
+      const response = await axios.put(`${API_URL}/auth/organization/ip`, {
+        allowedIP: allowedIP
+      });
+      setSecurityMessage(response.data.message);
+    } catch (error) {
+      setSecurityError(error.response?.data?.error || 'Failed to update security settings.');
+    }
+  };
+
   return (
     <>
       <h1 className="page-header">Dashboard</h1>
       
+      {/* Create Job Site*/}
       <div className="content-card">
         <h2 className="card-title">Create Job Site</h2>
         <form onSubmit={handleCreateJob}>
@@ -75,7 +99,8 @@ export default function ManagerDashboard({ users, fetchData }) {
         </form>
       </div>
 
-      <div className="content-card">
+      {/* Invite New Team Member */}
+      <div className="content-card" style={{ marginTop: '30px' }}>
         <h2 className="card-title">Invite New Team Member</h2>
         <p style={{ color: '#666', marginBottom: '20px' }}>
           Generate a secure, one-time link to invite an employee to your organization workspace.
@@ -125,12 +150,47 @@ export default function ManagerDashboard({ users, fetchData }) {
                 style={{ flex: 1, padding: '8px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#fff' }}
               />
               <button 
+                type="button"
                 onClick={() => navigator.clipboard.writeText(inviteLink)}
                 style={{ padding: '8px 15px', backgroundColor: '#fff', border: '1px solid #0d47a1', color: '#0d47a1', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
               >
                 Copy
               </button>
             </div>
+          </div>
+        )}
+      </div>
+
+      {/* NEW Network Security Settings*/}
+      <div className="content-card" style={{ marginTop: '30px' }}>
+        <h2 className="card-title">Network Security & Firewall</h2>
+        <p style={{ color: '#666', marginBottom: '20px' }}>
+          Restrict timesheet clock-ins to a specific corporate network, static IP, or authorized company VPN.
+        </p>
+
+        <form onSubmit={handleUpdateSecurity} style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <input 
+            type="text" 
+            placeholder="e.g., 192.168.1.1 (Leave blank to disable restriction)" 
+            value={allowedIP} 
+            onChange={(e) => setAllowedIP(e.target.value)} 
+            className="form-input"
+            style={{ flex: 1, minWidth: '250px', margin: 0 }}
+          />
+          <button type="submit" className="btn-primary" style={{ margin: 0 }}>
+            Save Rules
+          </button>
+        </form>
+
+        {securityMessage && (
+          <div style={{ marginTop: '15px', color: '#2e7d32', fontSize: '14px', fontWeight: '500' }}>
+            ✅ {securityMessage}
+          </div>
+        )}
+
+        {securityError && (
+          <div style={{ marginTop: '15px', color: '#c62828', fontSize: '14px' }}>
+            ❌ {securityError}
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 import express from 'express';
 import Timesheet from '../models/Timesheet.js';
+import Organization from '../models/Organization.js';
 
 const router = express.Router();
 
@@ -7,6 +8,23 @@ const router = express.Router();
 router.post('/clock-in', async (req, res) => {
   try {
     const { userId, jobId } = req.body;
+    const organizationId = req.user.organizationId;
+
+    // fetch the ip
+    const org = await Organization.findById(organizationId);
+
+    //Extract employee ip
+    let userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    if (userIP === '::1' || userIP === '::ffff:127.0.0.1') {
+      userIP = '127.0.0.1'; 
+    }
+
+    if (org.allowedIP && org.allowedIP.trim() !== '' && userIP !== org.allowedIP) {
+      return res.status(403).json({ 
+        error: `Network Access Denied. You must be connected to the company network to clock in. (Your IP: ${userIP})` 
+      });
+    }
+
     const newTimesheet = new Timesheet({
       userId,
       jobId,

@@ -176,4 +176,25 @@ router.post('/register-employee', async (req, res) => {
   }
 });
 
+// PUT: Update Organization Allowed IP
+router.put('/organization/ip', protect, async (req, res) => {
+  try {
+    const { allowedIP } = req.body;
+    if (req.user.role !== 'Admin' && req.user.role !== 'Manager') {
+      return res.status(403).json({ error: 'Not authorized to change company security settings' });
+    }
+
+    // Update the organization document using the ID embedded in the manager's JWT
+    await Organization.findByIdAndUpdate(
+      req.user.organizationId, 
+      { allowedIP: allowedIP ? allowedIP.trim() : '' }
+    );
+
+    res.status(200).json({ message: 'Network security settings updated successfully' });
+  } catch (error) {
+    console.error('Error updating IP settings:', error);
+    res.status(500).json({ error: 'Failed to update security settings' });
+  }
+});
+
 export default router;
