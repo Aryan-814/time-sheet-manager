@@ -7,6 +7,7 @@ import TimesheetTable from './components/TimesheetTable';
 import EmployeeDashboard from './components/EmployeeDashboard';
 import HoursChart from './components/HoursChart';
 import Auth from './components/Auth';
+import OvertimeWatchlist from './components/OvertimeWatchlist';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -90,7 +91,7 @@ function App() {
       <main className="content-area">
         {view === 'employee' && <EmployeeDashboard />}
         {view === 'manager' && <ManagerDashboard users={users} fetchData={fetchData} />}
-        {view == 'analytics' && <HoursChart timesheets={timesheets} />}
+        {view == 'analytics' && (<HoursChart timesheets={timesheets} /> && <OvertimeWatchlist />)}
         {view === 'timesheets' && <TimesheetTable timesheets={timesheets} />}
       </main>
 
