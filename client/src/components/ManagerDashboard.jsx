@@ -4,6 +4,7 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function ManagerDashboard({ users, fetchData }) {
+  const [jobError, setJobError] = useState('');
   // Job Site State 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -24,6 +25,7 @@ export default function ManagerDashboard({ users, fetchData }) {
 
   const handleCreateJob = async (e) => {
     e.preventDefault(); 
+    setJobError('');
     try {
       const newJobData = {
         title, description, managerId,
@@ -180,6 +182,11 @@ export default function ManagerDashboard({ users, fetchData }) {
           <button type="submit" className="btn-primary" style={{ margin: 0 }}>
             Save Rules
           </button>
+          {jobError && (
+            <div style={{ marginTop: '15px', color: '#c62828', fontSize: '14px' }}>
+              {jobError}
+            </div>
+          )}
         </form>
 
         {securityMessage && (

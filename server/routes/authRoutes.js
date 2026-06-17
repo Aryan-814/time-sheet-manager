@@ -96,7 +96,7 @@ router.post('/invite', protect, async (req, res) => {
     const { email, role } = req.body;
 
     if (req.user.role !== 'Admin' && req.user.role !== 'Manager') {
-      return res.status(403).json({ error: 'Not authorized to send invitations' });
+      return res.status(403).json({ error: 'You have to be a manager to do this' });
     }
 
     const token = crypto.randomBytes(32).toString('hex');

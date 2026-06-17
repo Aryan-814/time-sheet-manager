@@ -8,6 +8,10 @@ router.post('/', async (req, res) => {
   try {
     const { title, description, managerId, coordinates } = req.body;
 
+    if (req.user.role !== 'Admin' && req.user.role !== 'Manager') {
+      return res.status(403).json({ error: 'You have to be a manager to do this' });
+    }
+
     const newJob = new Job({
       title,
       description,
