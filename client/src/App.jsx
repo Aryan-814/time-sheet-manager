@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -15,8 +15,20 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 function App() {
 
   const [token, setToken] = useState(localStorage.getItem('timesheet_token'))
+
+  let userRole = null;
+  let userId = null;
+  if (token) {
+    try {
+      const decoded = JSON.parse(atob(token.split('.')[1]));
+      userId = decoded.userId;
+      userRole = decoded.role;
+    } catch (e) {
+      console.error("Failed to parse token", e);
+    }
+  }
   
-  const [view, setView] = useState('manager'); 
+  const [view, setView] = useState('employee'); 
   const [users, setUsers] = useState([]);
   const [timesheets, setTimesheets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,6 +74,9 @@ function App() {
   if (loading) return <div style={{padding: '40px'}}>Loading workspace...</div>;
   if (error) return <div style={{padding: '40px', color: 'red'}}>{error}</div>;
 
+  const currentUser = users.find(u => u._id === userId);
+  const employeeName = currentUser ? currentUser.firstName : '';
+
   return (
     <div className="app-layout">
 
@@ -71,21 +86,28 @@ function App() {
         </div>
         
         <nav className="navbar-nav">
-          <button className={`nav-button ${view === 'manager' ? 'active' : ''}`} onClick={() => { setView('manager'); fetchData(); }}>
-            Dashboard
-          </button>
+          {userRole === 'Manager' || userRole === 'Admin' ? (
+            <>
+              <button className={`nav-button ${view === 'manager' ? 'active' : ''}`} onClick={() => { setView('manager'); fetchData(); }}>
+                Dashboard
+              </button>
+              <button className={`nav-button ${view === 'ai-summaries' ? 'active' : ''}`} onClick={() => setView('ai-summaries')}>
+                AI Summaries
+              </button>
+            </>
+          ) : null}
           <button className={`nav-button ${view === 'timesheets' ? 'active' : ''}`} onClick={() => { setView('timesheets'); fetchData(); }}>
             Timesheets
           </button>
           <button className={`nav-button ${view === 'analytics' ? 'active' : ''}`} onClick={() => { setView('analytics'); fetchData(); }}>
             Analytics
-          </button>
-          <button className={`nav-button ${view === 'ai-summaries' ? 'active' : ''}`} onClick={() => setView('ai-summaries')}>
-            AI Summaries
-          </button>
+          </button>    
           <button className={`nav-button ${view === 'employee' ? 'active' : ''}`} onClick={() => setView('employee')}>
             Clock In Terminal
           </button>
+          <span className='nav-button'>
+            {employeeName}
+          </span>
           <button onClick={handleLogout} className='nav-button'>
             Logout
           </button>
