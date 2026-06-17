@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function ManagerDashboard({ users, fetchData }) {
   const [jobError, setJobError] = useState('');
+  
   // Job Site State 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -36,6 +37,7 @@ export default function ManagerDashboard({ users, fetchData }) {
       fetchData(); 
     } catch (err) {
       console.error("Error creating job:", err);
+      setJobError(err.response?.data?.error || 'Failed to create job');
     }
   };
 
@@ -98,6 +100,11 @@ export default function ManagerDashboard({ users, fetchData }) {
             <input type="number" step="any" placeholder="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} required className="form-input"/>
           </div>
           <button type="submit" className="btn-primary">Create Site</button>
+          {jobError && (
+            <div style={{ marginTop: '15px', color: '#c62828', fontSize: '14px' }}>
+              {jobError}
+            </div>
+          )}
         </form>
       </div>
 
@@ -182,11 +189,6 @@ export default function ManagerDashboard({ users, fetchData }) {
           <button type="submit" className="btn-primary" style={{ margin: 0 }}>
             Save Rules
           </button>
-          {jobError && (
-            <div style={{ marginTop: '15px', color: '#c62828', fontSize: '14px' }}>
-              {jobError}
-            </div>
-          )}
         </form>
 
         {securityMessage && (

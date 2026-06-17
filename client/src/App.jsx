@@ -8,6 +8,7 @@ import EmployeeDashboard from './components/EmployeeDashboard';
 import HoursChart from './components/HoursChart';
 import Auth from './components/Auth';
 import OvertimeWatchlist from './components/OvertimeWatchlist';
+import AISummaries from './components/AISummaries';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -79,6 +80,9 @@ function App() {
           <button className={`nav-button ${view === 'analytics' ? 'active' : ''}`} onClick={() => { setView('analytics'); fetchData(); }}>
             Analytics
           </button>
+          <button className={`nav-button ${view === 'ai-summaries' ? 'active' : ''}`} onClick={() => setView('ai-summaries')}>
+            AI Summaries
+          </button>
           <button className={`nav-button ${view === 'employee' ? 'active' : ''}`} onClick={() => setView('employee')}>
             Clock In Terminal
           </button>
@@ -91,6 +95,7 @@ function App() {
       <main className="content-area">
         {view === 'employee' && <EmployeeDashboard />}
         {view === 'manager' && <ManagerDashboard users={users} fetchData={fetchData} />}
+        {view === 'ai-summaries' && <AISummaries />}
         {view == 'analytics' && (<HoursChart timesheets={timesheets} /> && <OvertimeWatchlist />)}
         {view === 'timesheets' && <TimesheetTable timesheets={timesheets} />}
       </main>
