@@ -3,10 +3,9 @@ node_modules/
 server/node_modules/
 client/node_modules/
 
-# Environment variables (CRITICAL for security)
+# Environment variables
 .env
 server/.env
 client/.env
 
-# Mac system files (just in case)
 .DS_Store
