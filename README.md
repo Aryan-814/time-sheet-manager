@@ -1,4 +1,4 @@
-<![CDATA[# TimeTracker — Employee Timesheet Management System
+# TimeTracker — Employee Timesheet Management System
 
 A full-stack **MERN** application for managing employee timesheets, job sites, and workforce analytics. Built for companies that need a centralized system to track employee hours, manage job sites, and gain AI-powered insights into workforce patterns.
 
@@ -248,4 +248,3 @@ All protected routes require a `Bearer` token in the `Authorization` header.
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
-]]>
